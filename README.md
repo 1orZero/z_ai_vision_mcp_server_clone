@@ -29,12 +29,20 @@ Set either `VISION_ENDPOINT` or `VISION_BASE_URL`.
 | `VISION_TOP_P` | No | Optional model top_p. |
 | `VISION_MAX_TOKENS` | No | Optional max_tokens. |
 
+You can also place these values in a local `.env` file in the working directory where the server starts. Real environment variables override `.env` values.
+
 ## Run
 
 ```bash
 npm install
 npm run build
 VISION_ENDPOINT=http://localhost:11434/v1/chat/completions VISION_MODEL=llava npm start
+```
+
+Or with `.env`:
+
+```bash
+npm start
 ```
 
 ## MCP Client Example

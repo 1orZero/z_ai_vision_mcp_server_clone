@@ -1,6 +1,7 @@
 #!/usr/bin/env node
 import { McpServer } from "@modelcontextprotocol/sdk/server/mcp.js";
 import { StdioServerTransport } from "@modelcontextprotocol/sdk/server/stdio.js";
+import { readFileSync } from "node:fs";
 import { readFile, stat } from "node:fs/promises";
 import { extname } from "node:path";
 import { pathToFileURL } from "node:url";
@@ -84,7 +85,7 @@ const prompts = {
   },
 };
 
-export function loadVisionConfig(env: Environment = process.env): VisionConfig {
+export function loadVisionConfig(env: Environment = loadRuntimeEnvironment()): VisionConfig {
   const endpoint = env.VISION_ENDPOINT || endpointFromBaseUrl(env.VISION_BASE_URL);
   if (!endpoint) {
     throw new Error("VISION_ENDPOINT or VISION_BASE_URL is required");
@@ -106,6 +107,48 @@ export function loadVisionConfig(env: Environment = process.env): VisionConfig {
     topP: readOptionalNumber(env.VISION_TOP_P),
     maxTokens: readOptionalNumber(env.VISION_MAX_TOKENS),
   };
+}
+
+function loadRuntimeEnvironment(): Environment {
+  return { ...readDotEnvFile(), ...process.env };
+}
+
+function readDotEnvFile(): Environment {
+  let text: string;
+  try {
+    text = readFileSync(".env", "utf8");
+  } catch (error) {
+    const code = error instanceof Error && "code" in error ? error.code : undefined;
+    if (code === "ENOENT") {
+      return {};
+    }
+    throw error;
+  }
+
+  const env: Environment = {};
+  for (const rawLine of text.split(/\r?\n/)) {
+    const line = rawLine.trim();
+    if (!line || line.startsWith("#")) {
+      continue;
+    }
+
+    const index = line.indexOf("=");
+    if (index < 1) {
+      continue;
+    }
+
+    const key = line.slice(0, index).trim();
+    let value = line.slice(index + 1).trim();
+    if (
+      (value.startsWith("\"") && value.endsWith("\"")) ||
+      (value.startsWith("'") && value.endsWith("'"))
+    ) {
+      value = value.slice(1, -1);
+    }
+    env[key] = value;
+  }
+
+  return env;
 }
 
 function endpointFromBaseUrl(baseUrl: string | undefined): string | undefined {
