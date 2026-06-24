@@ -1,0 +1,39 @@
+{
+  "name": "z_ai_vision_mcp_server_clone",
+  "version": "0.1.0",
+  "description": "OpenAI-compatible MCP server for custom vision model endpoints",
+  "main": "build/src/server.js",
+  "type": "module",
+  "bin": {
+    "z_ai_vision_mcp_server_clone": "./build/src/server.js"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/1orzero/z_ai_vision_mcp_server_clone.git"
+  },
+  "bugs": {
+    "url": "https://github.com/1orzero/z_ai_vision_mcp_server_clone/issues"
+  },
+  "homepage": "https://github.com/1orzero/z_ai_vision_mcp_server_clone#readme",
+  "scripts": {
+    "build": "tsc",
+    "prepack": "npm run build",
+    "start": "node build/src/server.js",
+    "test": "npm run build && node build/test/vision.test.js"
+  },
+  "files": [
+    "build",
+    "README.md"
+  ],
+  "engines": {
+    "node": ">=20.0.0"
+  },
+  "dependencies": {
+    "@modelcontextprotocol/sdk": "1.26.0",
+    "zod": "^4.0.0"
+  },
+  "devDependencies": {
+    "@types/node": "^24.0.0",
+    "typescript": "^5.9.0"
+  }
+}
