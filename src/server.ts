@@ -1,10 +1,10 @@
 #!/usr/bin/env node
 import { McpServer } from "@modelcontextprotocol/sdk/server/mcp.js";
 import { StdioServerTransport } from "@modelcontextprotocol/sdk/server/stdio.js";
-import { readFileSync } from "node:fs";
+import { readFileSync, realpathSync } from "node:fs";
 import { readFile, stat } from "node:fs/promises";
 import { extname } from "node:path";
-import { pathToFileURL } from "node:url";
+import { fileURLToPath } from "node:url";
 import * as z from "zod/v4";
 
 export const IMAGE_TOOL_NAMES = [
@@ -533,7 +533,15 @@ async function main(): Promise<void> {
   await server.connect(new StdioServerTransport());
 }
 
-if (process.argv[1] && import.meta.url === pathToFileURL(process.argv[1]).href) {
+export function isMainModule(argvPath = process.argv[1]): boolean {
+  if (!argvPath) {
+    return false;
+  }
+
+  return realpathSync(argvPath) === realpathSync(fileURLToPath(import.meta.url));
+}
+
+if (isMainModule()) {
   main().catch((error: unknown) => {
     console.error(error instanceof Error ? error.message : String(error));
     process.exit(1);

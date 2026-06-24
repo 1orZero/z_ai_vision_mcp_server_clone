@@ -1,6 +1,6 @@
 {
   "name": "z_ai_vision_mcp_server_clone",
-  "version": "0.1.0",
+  "version": "0.1.1",
   "description": "OpenAI-compatible MCP server for custom vision model endpoints",
   "main": "build/src/server.js",
   "type": "module",
@@ -16,7 +16,7 @@
   },
   "homepage": "https://github.com/1orzero/z_ai_vision_mcp_server_clone#readme",
   "scripts": {
-    "build": "tsc",
+    "build": "tsc && chmod 755 build/src/server.js",
     "prepack": "npm run build",
     "start": "node build/src/server.js",
     "test": "npm run build && node build/test/vision.test.js"

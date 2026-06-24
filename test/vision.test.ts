@@ -1,12 +1,13 @@
 import assert from "node:assert/strict";
 import { chdir, cwd } from "node:process";
-import { mkdtemp, rm, writeFile } from "node:fs/promises";
+import { mkdir, mkdtemp, rm, stat, symlink, writeFile } from "node:fs/promises";
 import { tmpdir } from "node:os";
 import { join } from "node:path";
 import {
   IMAGE_TOOL_NAMES,
   buildVisionMessages,
   imageContentFromSource,
+  isMainModule,
   loadVisionConfig,
 } from "../src/server.js";
 
@@ -21,6 +22,9 @@ const expectedTools = [
 ];
 
 assert.deepEqual(IMAGE_TOOL_NAMES, expectedTools);
+
+const serverBuild = await stat(new URL("../src/server.js", import.meta.url));
+assert.ok(serverBuild.mode & 0o111, "build/src/server.js must be executable for npx");
 
 const config = loadVisionConfig({
   VISION_PROVIDER: "local",
@@ -44,6 +48,10 @@ try {
   }
 
   chdir(dir);
+  await mkdir("bin");
+  await symlink(new URL("../src/server.js", import.meta.url), "bin/z_ai_vision_mcp_server_clone");
+  assert.equal(isMainModule(join(dir, "bin/z_ai_vision_mcp_server_clone")), true);
+
   await writeFile(
     ".env",
     "VISION_PROVIDER=file-provider\nVISION_ENDPOINT=http://example.test/v1/chat/completions\nVISION_MODEL=file-model\nVISION_API_KEY=file-key\n",
