@@ -52,11 +52,12 @@ npm start
   "mcpServers": {
     "z-ai-vision-clone": {
       "type": "stdio",
-      "command": "node",
-      "args": ["/absolute/path/to/z_ai_vision_mcp_server_clone/build/src/server.js"],
+      "command": "npx",
+      "args": ["-y", "z_ai_vision_mcp_server_clone"],
       "env": {
-        "VISION_ENDPOINT": "http://localhost:11434/v1/chat/completions",
-        "VISION_MODEL": "llava"
+        "VISION_ENDPOINT": "https://your-provider.com/v1/chat/completions",
+        "VISION_MODEL": "your-vision-model",
+        "VISION_API_KEY": "your-api-key"
       }
     }
   }
